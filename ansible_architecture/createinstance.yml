@@ -1,0 +1,12 @@
+      - name : createinstance   
+        ec2:
+           key_name: aws_ansible
+           instance_type: t2.micro
+           image: "{{item.ami}}"
+           wait: true
+           exact_count: 1
+           count_tag:
+             Name: "{{item.name}}"
+           instance_tags:
+             Name: "{{item.name}}"
+        register: ec2

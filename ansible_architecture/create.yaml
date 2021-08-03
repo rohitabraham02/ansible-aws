@@ -1,0 +1,12 @@
+- hosts: localhost
+  gather_facts: no
+
+  tasks:
+    - include_tasks: createinstance.yml
+      loop:
+              - {name : "redhat" ,ami : ami-096fda3c22c1c990a }
+              - {name : "ubuntu" ,ami : ami-09e67e426f25ce0d7 }
+    - meta: refresh_inventory
+       
+    - pause:
+         minutes: 1

@@ -1,0 +1,18 @@
+- hosts : all
+  gather_facts: true
+  user: "{{'ec2-user' if (group_names[2] == 'tag_Name_redhat') else 'ubuntu' }}"
+  become: true
+  tasks :
+    
+    - meta: refresh_inventory
+
+    - yum :
+        name : "httpd"
+        state: present
+      when: ansible_facts["distribution"] == "RedHat"
+       
+    - apt  :
+        name : "apache2"
+        update_cache: yes
+        state : present
+      when: ansible_facts["distribution"] == "Ubuntu"

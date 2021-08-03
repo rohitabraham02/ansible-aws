@@ -1,0 +1,8 @@
+- hosts: tag_Name_redhat
+  gather_facts : true
+  user: ec2-user
+  become : true 
+  tasks:
+    - name: Start
+      debug:
+        msg: "{{ansible_facts}}"

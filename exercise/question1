@@ -1,0 +1,10 @@
+- hosts: localhost
+  vars:
+    greeting: Hello world!
+  vars_files:
+              - /home/cloudshell-user/course/exercise/exercise4
+  tasks:
+
+    - name: Ansible Basic Variable Example
+      debug:
+          msg: "{{ lab }}"

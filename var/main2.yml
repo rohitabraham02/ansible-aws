@@ -1,0 +1,7 @@
+- hosts: localhost
+  vars:
+    greeting: Hello world! 
+  tasks:
+    - debug:
+          msg: "{{ region_file [0] }}"
+

@@ -1,0 +1,13 @@
+
+# demo_setup.yml
+
+- hosts: localhost
+
+  tasks:
+
+    - name: Provision a set of instances
+      ec2:
+         instance_type: t2.micro
+         image: ami-0742b4e673072066f
+
+      register: ec2

@@ -1,0 +1,5 @@
+User:
+  - {roll:1 , name: "ann" , age : 30}
+  - {roll:2 , name: "anne" , age : 40}
+  - {roll:3 , name: "fedor" , age : 50}
+  - {roll:4 , name : "khabib" , age: 55}

@@ -1,0 +1,11 @@
+- name : "test"
+  hosts : localhost
+
+  tasks:
+          - name : Example of core modules 
+            command: "ls -lt "
+            register: output
+
+          - name: output
+            debug : 
+              msg : "{{ output }}"

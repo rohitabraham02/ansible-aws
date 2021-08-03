@@ -1,0 +1,9 @@
+- hosts: localhost
+  vars:
+    greeting: Hello world! 
+  vars_files:
+              - /home/cloudshell-user/course/var/external_variable
+  tasks:
+    - name: Ansible Basic Variable Example
+      debug:
+          msg: "{{ test  }}"

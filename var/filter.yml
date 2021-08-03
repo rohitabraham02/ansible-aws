@@ -1,0 +1,9 @@
+- hosts: localhost
+  vars:
+    greeting: Hello world! 
+  tasks:
+
+    - name: Ansible Basic filter  Example
+      debug:
+          msg: "{{(1,2,3,4,5) |select('odd')}}"
+

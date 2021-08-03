@@ -1,0 +1,25 @@
+- hosts : localhost
+  
+  tasks :
+   - name: "Create a role and attach a managed policy called 'PowerUserAccess'"
+     community.aws.iam_role:
+       name: mynewrole-ansible
+       assume_role_policy_document: "{{ lookup('file','policy.json') }}"
+       managed_policies:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+   - name: looped creation
+     lambda:
+       name: '{{ item.name }}'
+       zip_file: '{{item.zip_file}}'
+       runtime: '{{item.runtime}}'
+       role: 'arn:aws:iam::594770830557:role/mynewrole-ansible'
+       handler: '{{item.handler}}'
+     loop : 
+         - name: helloworld-node
+           zip_file: 'lambda-node.zip'
+           runtime :  nodejs12.x
+           handler : lambda-node/index.handler
+         - name : helloworld-node1
+           zip_file: 'lambda-node1.zip'
+           runtime : nodejs12.x
+           handler : lambda-node1/index.handler

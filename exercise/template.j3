@@ -1,0 +1,5 @@
+{{totalAge}}
+{%  for item in User   %}
+	{{totalAge=item.age+totalAge )}}
+{% endfor %}
+

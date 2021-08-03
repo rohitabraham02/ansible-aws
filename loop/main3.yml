@@ -1,0 +1,12 @@
+- hosts : localhost
+
+  tasks :
+          
+        - name: Show all the items in the task 
+          debug:
+             msg: "{{ item.key}} is key  {{item.value}}  value"
+          loop: "{{ tag_data | dict2items }}"
+          vars :
+            tag_data :
+               Environment: dev
+               Application: payment

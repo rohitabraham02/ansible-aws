@@ -1,0 +1,11 @@
+- hosts : localhost
+
+  tasks :
+          
+        - name: Show all the items in the task 
+          debug:
+            msg: "{{ item.name}} is {{item.age}} years old"
+          loop: 
+                - { name : "john" , age : 10}
+                - { name : "jim" , age : 15}
+                - { name : "jac" , age : 25}

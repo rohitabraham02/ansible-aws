@@ -1,0 +1,11 @@
+- hosts: localhost
+  vars:
+    greeting: Hello world! 
+  vars_files:
+              - /home/cloudshell-user/course/var/my_external_var_dict
+  tasks:
+
+    - name: Ansible Basic Variable Example
+      debug:
+          msg: "{{ RegionMap['us-east-1'] }}"
+

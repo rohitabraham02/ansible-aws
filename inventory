@@ -1,0 +1,5 @@
+[web]
+ec2-54-196-230-224.compute-1.amazonaws.com
+
+[db]
+ec2-52-23-239-87.compute-1.amazonaws.com

@@ -1,0 +1,11 @@
+- hosts: localhost
+  vars:
+    greeting: Hello world!
+  vars_files:
+              - /home/cloudshell-user/course/exercise/exercise
+  tasks:
+
+    - name: Ansible Basic Variable Example
+      template:
+        src: template.j2
+        dest: output

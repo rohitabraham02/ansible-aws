@@ -1,0 +1,129 @@
+- hosts: localhost  # put localhost.  We are processing against aws
+  connection: local  # put local.  We are processing against aws
+  gather_facts: False  # don't gather facts against localhost
+
+- vars : 
+   vpc_title: 'ansible'
+   vpc_name: "{{ vpc_title }} VPC"
+   igw_name: "{{ vpc_title }} IGW"
+   subnet_name-1: "{{ vpc_title }} Subnet"
+   subnet_name-2: "{{ vpc_title }} Subnet"
+   acl_name: "{{ vpc_title }} ACL"
+   route_table_name: "{{ vpc_title }} route table"
+   vpcCidrBlock: '10.0.0.0/16'
+   destinationCidrBlock: '0.0.0.0/0'
+   subNetCidrBlock-1: '10.0.1.0/24'
+   subNetCidrBlock-1: '10.0.2.0/24'
+   state : "present"
+   zone: 'us-east-1a'
+   region: 'us-east-1'
+
+  tasks:
+   - name: create a new ec2 VPC
+    # create a vpc with name, cidr block,dns support, and tenancy
+     ec2_vpc_net:
+       name: "{{ vpc_name }}" 
+       cidr_block: "{{ vpcCidrBlock }}"
+       region: "{{ region }}"
+       # enable dns support 
+       dns_support: yes
+       # enable dns hostnames
+       dns_hostnames: yes
+       tenancy: default
+       state: "{{ state }}"
+     register: ec2_vpc_net_result
+
+   - name: create ec2 vpc internet gateway       
+    # create an internet gateway for the vpc
+     ec2_vpc_igw:
+      vpc_id: "{{ ec2_vpc_net_result.vpc.id }}"
+      region: "{{ region }}"
+      state: "{{ state }}" 
+      tags:
+        Name: "{{ igw_name }}"
+     register: igw_result
+
+
+   - name: create ec2 vpc subnet - 1 
+    # create the subnet for the vpc with a cidr block
+     ec2_vpc_subnet:
+      vpc_id: "{{ ec2_vpc_net_result.vpc.id }}"
+      region: "{{ region }}"
+      az: "{{ zone }}"      # az is the availability zone
+      state: "{{ state }}"
+      cidr: "{{ subNetCidrBlock-1 }}"
+      # enable public ip
+      map_public: yes
+      resource_tags:
+        Name: "{{ subnet_name-1 }}"
+     register: subnet_result-1
+
+   - name: create ec2 vpc subnet - 1 
+    # create the subnet for the vpc with a cidr block
+     ec2_vpc_subnet:
+      vpc_id: "{{ ec2_vpc_net_result.vpc.id }}"
+      region: "{{ region }}"
+      az: "{{ zone }}"      # az is the availability zone
+      state: "{{ state }}"
+      cidr: "{{ subNetCidrBlock-2 }}"
+      # enable public ip
+      map_public: yes
+      resource_tags:
+        Name: "{{ subnet_name-2 }}"
+     register: subnet_result-2
+
+   - name: create ec2 VPC Network access control list
+    # create the access control list with ingress and egress ports 
+     ec2_vpc_nacl:
+      vpc_id: "{{ ec2_vpc_net_result.vpc.id }}"
+      region: "{{ region }}"
+      state: "{{ state }}"
+      name: "{{ acl_name }}"
+      subnets:  
+        - "{{ subnet_result-2.subnet.id }}" 
+        - "{{ subnet_result-1.subnet.id }}" 
+      tags:
+        Name: "{{ acl_name }}"
+        Description: "{{ acl_name }}"
+      # ingress acl rules
+      ingress:
+        # rule no, protocol, allow/deny, cidr, icmp_type, icmp_code, port from, port to
+        # allow ingress port 22
+        - [100, 'tcp', 'allow', "{{ destinationCidrBlock }}", null, null, 22, 22]
+        # allow ingress port 80
+        - [200, 'tcp', 'allow', "{{ destinationCidrBlock }}", null, null, 80, 80]
+        # allow icmp
+        - [300, 'icmp', 'allow', "{{ destinationCidrBlock }}", 0, 8]
+        # allow ingress ephemeral ports
+        - [400, 'tcp', 'allow', "{{ destinationCidrBlock }}", null, null, 1024, 65535]
+      # egress acl rules
+      egress:
+        # rule no, protocol, allow/deny, cidr, icmp_type, icmp_code, port from, port to
+        # allow egres port 22 
+        - [100, 'tcp', 'allow', "{{ destinationCidrBlock }}", null, null, null, null]
+       
+     register: acl_results
+   
+   
+   - name: create ec2 VPC public subnet route table
+    # create route table and connect subnet to routes
+     ec2_vpc_route_table:
+      vpc_id: "{{ ec2_vpc_net_result.vpc.id }}"
+      region: "{{ region }}"
+      state: "{{ state }}"
+      tags:
+        Name: "{{ route_table_name }}"
+      subnets:  
+        - "{{ subnet_result-2.subnet.id }}" 
+        - "{{ subnet_result-1.subnet.id }}" 
+      
+      # create routes
+      routes:
+        - dest: "{{ destinationCidrBlock }}" 
+          gateway_id: "{{ igw_result.gateway_id }}"
+     register: public_route_table
+  
+   - name: print out new vpc, subnet id, and security group for vpc
+    # print out new subnet id and security group
+     debug:
+      msg: "To use the new created VPC: {{ vpc_name }}; Use subnet id: {{ subnet_result.subnet.id }} and to create your AWS instances " 

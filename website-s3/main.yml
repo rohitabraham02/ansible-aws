@@ -1,0 +1,26 @@
+- name : 'create a s3 bucket'
+  hosts:  localhost 
+  vars :
+    website_name: verylazycoders
+  tasks :
+   - name : 'create an s3 bucket'
+     amazon.aws.s3_bucket:
+      name: "{{website_name}}"
+      policy: "{{ lookup('file','policy.json') }}"
+      public_access:
+        block_public_acls: false
+        block_public_policy: false
+        ignore_public_acls: false
+        restrict_public_buckets: false
+
+   - name: 'put index.html file into the 3 bucket'
+     amazon.aws.aws_s3: 
+      bucket: "{{website_name}}"
+      object: index.html
+      src: /home/cloudshell-user/course/website-s3/index.html
+      mode: put
+  
+   - name: 'create a static website for that bucket'
+     community.aws.s3_website :
+            name: "{{website_name}}"
+            state: present

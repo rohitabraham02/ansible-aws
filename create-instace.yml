@@ -1,0 +1,15 @@
+- name: create a instance 
+  hosts : localhost 
+
+  tasks :
+          - name: module to create an instance 
+            ec2:
+                    key_name: aws_ansible
+                    image : ami-033d0645d1f338a00
+                    instance_type: t2.micro 
+                    count: 2
+                    state: present
+                    instance_tags:
+                               web: server
+                    wait: yes 
+

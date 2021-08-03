@@ -1,0 +1,13 @@
+- name: create a instance 
+  hosts : localhost 
+
+  tasks :
+          - name: module to create an instance 
+            ec2:
+                    image : ami-033d0645d1f338a00
+                    instance_type: t2.micro 
+                    instance_tags:
+                          foo: bar
+                    count_tag: foo
+                    exact_count: 1 
+                    wait: yes  

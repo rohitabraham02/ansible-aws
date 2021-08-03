@@ -1,0 +1,10 @@
+- hosts: localhost
+  vars:
+    greeting: Hello world!
+  vars_files:
+              - /home/cloudshell-user/course/exercise/exercise
+  tasks:
+
+    - name: Ansible Basic Variable Example
+      debug:
+          msg: "{{ User[0].name | capitalize  }}"

@@ -1,0 +1,11 @@
+- hosts : localhost
+
+  tasks :
+          
+        - name: Show all the items in the task 
+          debug:
+            msg: "{{ item }}"
+          loop: 
+                - a
+                - b 
+                - c 

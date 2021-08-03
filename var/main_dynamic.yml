@@ -1,0 +1,9 @@
+
+# demo_setup.yml
+
+- hosts: localhost
+  gather_facts: False
+
+  tasks:
+   - debug:
+       msg: " {{test}} "
